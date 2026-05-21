@@ -1,4 +1,4 @@
-package br.com.securepolicy.dto;
+package br.com.securepolicy.infrastructure.web.dto;
 
 import java.time.OffsetDateTime;
 

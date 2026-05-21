@@ -1,4 +1,4 @@
-package br.com.securepolicy.dto;
+package br.com.securepolicy.application.dto;
 
 import br.com.securepolicy.domain.ClaimStatus;
 

@@ -1,4 +1,4 @@
-package br.com.securepolicy.repository;
+package br.com.securepolicy.infrastructure.persistence;
 
 import br.com.securepolicy.domain.ClaimStatus;
 import br.com.securepolicy.domain.InsuranceClaim;
@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.math.BigDecimal;
 import java.util.List;
 
-public interface ClaimRepository extends JpaRepository<InsuranceClaim, Long> {
+public interface JpaClaimRepository extends JpaRepository<InsuranceClaim, Long> {
 
     List<InsuranceClaim> findByStatus(ClaimStatus status);
 

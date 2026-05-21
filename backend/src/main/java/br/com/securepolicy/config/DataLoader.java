@@ -1,7 +1,7 @@
 package br.com.securepolicy.config;
 
 import br.com.securepolicy.domain.*;
-import br.com.securepolicy.repository.PolicyRepository;
+import br.com.securepolicy.infrastructure.persistence.JpaPolicyRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class DataLoader {
 
     @Bean
-    CommandLineRunner seedDatabase(PolicyRepository policyRepository) {
+    CommandLineRunner seedDatabase(JpaPolicyRepository policyRepository) {
         return args -> {
             Policy auto = new Policy(
                     "AUTO-2026-0001",
