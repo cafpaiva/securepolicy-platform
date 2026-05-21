@@ -1,0 +1,32 @@
+name: Bug
+description: Correcao de comportamento inesperado
+title: "fix: "
+labels: ["type:bug"]
+body:
+  - type: textarea
+    id: current
+    attributes:
+      label: Comportamento atual
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportamento esperado
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Passos para reproduzir
+      placeholder: |
+        1. Acesse...
+        2. Clique...
+        3. Observe...
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidencias
+      description: Logs, prints, payloads ou links relevantes.

@@ -1,0 +1,42 @@
+name: Feature
+description: Nova funcionalidade ou melhoria de produto
+title: "feat: "
+labels: ["type:feature"]
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexto
+      description: Qual problema ou oportunidade esta demanda resolve?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Escopo
+      description: O que deve ser entregue?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Criterios de aceite
+      description: Liste os comportamentos esperados.
+      placeholder: |
+        - Dado...
+        - Quando...
+        - Entao...
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - backend
+        - frontend
+        - microfrontend
+        - devops
+        - docs
+    validations:
+      required: true

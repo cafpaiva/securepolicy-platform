@@ -1,0 +1,71 @@
+:root {
+  color: #1d2433;
+  background: #f6f7f9;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+}
+
+.mfe-shell {
+  margin: 0 auto;
+  max-width: 1040px;
+  padding: 32px 20px;
+}
+
+header {
+  margin-bottom: 24px;
+}
+
+header span {
+  color: #1f6f8b;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+h1 {
+  font-size: 34px;
+  margin: 6px 0 0;
+}
+
+.policy-list {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.policy-card {
+  background: white;
+  border: 1px solid #dce3ea;
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.policy-card strong {
+  color: #607184;
+  font-size: 13px;
+}
+
+.policy-card h2 {
+  font-size: 20px;
+  margin: 8px 0 6px;
+}
+
+.policy-card p {
+  color: #4c5d70;
+  min-height: 48px;
+}
+
+.policy-card footer {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+@media (max-width: 760px) {
+  .policy-list {
+    grid-template-columns: 1fr;
+  }
+}

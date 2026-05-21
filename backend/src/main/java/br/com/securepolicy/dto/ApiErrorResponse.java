@@ -1,0 +1,34 @@
+package br.com.securepolicy.dto;
+
+import java.time.OffsetDateTime;
+
+public class ApiErrorResponse {
+
+    private final OffsetDateTime timestamp;
+    private final int status;
+    private final String message;
+    private final String path;
+
+    public ApiErrorResponse(OffsetDateTime timestamp, int status, String message, String path) {
+        this.timestamp = timestamp;
+        this.status = status;
+        this.message = message;
+        this.path = path;
+    }
+
+    public OffsetDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getPath() {
+        return path;
+    }
+}
