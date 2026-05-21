@@ -1,5 +1,6 @@
 package br.com.securepolicy.infrastructure.web;
 
+import br.com.securepolicy.domain.exception.ClaimCreationException;
 import br.com.securepolicy.domain.exception.PolicyNotFoundException;
 import br.com.securepolicy.infrastructure.web.dto.ApiErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,12 @@ public class ApiExceptionHandler {
     @ExceptionHandler(PolicyNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> handleNotFound(PolicyNotFoundException exception, HttpServletRequest request) {
         return buildResponse(HttpStatus.NOT_FOUND, exception.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(ClaimCreationException.class)
+    public ResponseEntity<ApiErrorResponse> handleBusinessRule(ClaimCreationException exception,
+                                                               HttpServletRequest request) {
+        return buildResponse(HttpStatus.UNPROCESSABLE_ENTITY, exception.getMessage(), request.getRequestURI());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

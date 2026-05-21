@@ -1,5 +1,7 @@
 package br.com.securepolicy.domain;
 
+import br.com.securepolicy.domain.exception.ClaimCreationException;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -105,8 +107,48 @@ public class Policy {
         return claims;
     }
 
+    public InsuranceClaim openClaim(String protocol, String description, BigDecimal amount, LocalDate openedAt) {
+        validateClaimOpening(amount, openedAt);
+
+        InsuranceClaim claim = new InsuranceClaim(
+                protocol,
+                description,
+                amount,
+                ClaimStatus.OPEN,
+                openedAt
+        );
+        addClaim(claim);
+        return claim;
+    }
+
     public void addClaim(InsuranceClaim claim) {
         claims.add(claim);
         claim.assignPolicy(this);
+    }
+
+    private void validateClaimOpening(BigDecimal amount, LocalDate openedAt) {
+        if (!acceptsNewClaims()) {
+            throw new ClaimCreationException("Apolice nao permite abertura de sinistro no status " + status);
+        }
+
+        if (!isActiveOn(openedAt)) {
+            throw new ClaimCreationException("Apolice fora do periodo de vigencia");
+        }
+
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ClaimCreationException("Valor do sinistro deve ser positivo");
+        }
+
+        if (amount.compareTo(coverageAmount) > 0) {
+            throw new ClaimCreationException("Valor do sinistro nao pode exceder a cobertura contratada");
+        }
+    }
+
+    private boolean acceptsNewClaims() {
+        return status == PolicyStatus.ACTIVE || status == PolicyStatus.PENDING_RENEWAL;
+    }
+
+    private boolean isActiveOn(LocalDate date) {
+        return !date.isBefore(startDate) && !date.isAfter(endDate);
     }
 }
