@@ -4,6 +4,7 @@
   "projects": {
     "securepolicy-angular-mfe": {
       "projectType": "application",
+      "root": "",
       "sourceRoot": "src",
       "architect": {
         "build": {
