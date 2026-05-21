@@ -1,5 +1,8 @@
 # SecurePolicy Full Stack
 
+![CI](https://github.com/cafpaiva/securepolicy-platform/actions/workflows/ci.yml/badge.svg)
+![CodeQL](https://github.com/cafpaiva/securepolicy-platform/actions/workflows/codeql.yml/badge.svg)
+
 Aplicacao demonstrativa para uma oportunidade senior Java / React em seguradora. O projeto simula um portal interno de apolices e sinistros com backend Spring Boot, persistencia JPA e frontends modernos consumindo APIs REST.
 
 ## Stack
@@ -28,6 +31,15 @@ docs/                 Roadmap, sprints, GitFlow e padroes de engenharia
 - [Backlog inicial](docs/BACKLOG.md)
 - [GitFlow](docs/GITFLOW.md)
 - [Conventional Commits](docs/CONVENTIONAL_COMMITS.md)
+- [GitHub profissional](docs/GITHUB_PROFESSIONAL_SETUP.md)
+
+## Ferramentas portateis
+
+Se Node/NPM/GitHub CLI nao estiverem no PATH da maquina, habilite as ferramentas portateis nesta sessao:
+
+```powershell
+.\scripts\use-dev-tools.ps1
+```
 
 ## Como rodar o backend
 
