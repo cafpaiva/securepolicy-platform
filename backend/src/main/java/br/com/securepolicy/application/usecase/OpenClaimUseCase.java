@@ -6,7 +6,6 @@ import br.com.securepolicy.application.mapper.PolicyApplicationMapper;
 import br.com.securepolicy.application.port.out.ClaimCommandPort;
 import br.com.securepolicy.application.port.out.ClaimProtocolGenerator;
 import br.com.securepolicy.application.port.out.PolicyQueryPort;
-import br.com.securepolicy.domain.ClaimStatus;
 import br.com.securepolicy.domain.InsuranceClaim;
 import br.com.securepolicy.domain.Policy;
 import br.com.securepolicy.domain.exception.PolicyNotFoundException;
@@ -36,15 +35,13 @@ public class OpenClaimUseCase {
         Policy policy = policyQueryPort.findById(command.getPolicyId())
                 .orElseThrow(() -> new PolicyNotFoundException(command.getPolicyId()));
 
-        InsuranceClaim claim = new InsuranceClaim(
+        InsuranceClaim claim = policy.openClaim(
                 protocolGenerator.nextProtocol(),
                 command.getDescription(),
                 command.getAmount(),
-                ClaimStatus.OPEN,
                 LocalDate.now()
         );
 
-        policy.addClaim(claim);
         return mapper.toClaimResponse(claimCommandPort.save(claim));
     }
 }

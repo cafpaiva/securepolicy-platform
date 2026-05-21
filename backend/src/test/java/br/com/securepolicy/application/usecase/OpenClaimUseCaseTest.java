@@ -9,6 +9,7 @@ import br.com.securepolicy.application.port.out.PolicyQueryPort;
 import br.com.securepolicy.domain.InsuranceClaim;
 import br.com.securepolicy.domain.Policy;
 import br.com.securepolicy.domain.PolicyStatus;
+import br.com.securepolicy.domain.exception.ClaimCreationException;
 import br.com.securepolicy.domain.exception.PolicyNotFoundException;
 import org.junit.jupiter.api.Test;
 
@@ -70,6 +71,90 @@ class OpenClaimUseCaseTest {
                 new BigDecimal("3800.00")
         ))).isInstanceOf(PolicyNotFoundException.class)
                 .hasMessage("Apolice nao encontrada: 999");
+    }
+
+    @Test
+    void shouldFailWhenPolicyStatusDoesNotAllowClaims() {
+        OpenClaimUseCase useCase = newUseCaseFor(policyWithStatus(PolicyStatus.SUSPENDED));
+
+        assertThatThrownBy(() -> useCase.execute(validCommand()))
+                .isInstanceOf(ClaimCreationException.class)
+                .hasMessage("Apolice nao permite abertura de sinistro no status SUSPENDED");
+    }
+
+    @Test
+    void shouldFailWhenPolicyIsExpired() {
+        Policy expiredPolicy = new Policy(
+                "AUTO-2025-0001",
+                "Mariana Azevedo",
+                "Seguro Auto Premium",
+                PolicyStatus.ACTIVE,
+                new BigDecimal("489.90"),
+                new BigDecimal("98000.00"),
+                LocalDate.now().minusMonths(12),
+                LocalDate.now().minusDays(1),
+                42
+        );
+        OpenClaimUseCase useCase = newUseCaseFor(expiredPolicy);
+
+        assertThatThrownBy(() -> useCase.execute(validCommand()))
+                .isInstanceOf(ClaimCreationException.class)
+                .hasMessage("Apolice fora do periodo de vigencia");
+    }
+
+    @Test
+    void shouldFailWhenClaimAmountIsNotPositive() {
+        OpenClaimUseCase useCase = newUseCaseFor(policyWithStatus(PolicyStatus.ACTIVE));
+
+        assertThatThrownBy(() -> useCase.execute(new CreateClaimCommand(
+                1L,
+                "Valor invalido",
+                BigDecimal.ZERO
+        ))).isInstanceOf(ClaimCreationException.class)
+                .hasMessage("Valor do sinistro deve ser positivo");
+    }
+
+    @Test
+    void shouldFailWhenClaimAmountExceedsCoverage() {
+        OpenClaimUseCase useCase = newUseCaseFor(policyWithStatus(PolicyStatus.ACTIVE));
+
+        assertThatThrownBy(() -> useCase.execute(new CreateClaimCommand(
+                1L,
+                "Perda integral acima da cobertura",
+                new BigDecimal("120000.00")
+        ))).isInstanceOf(ClaimCreationException.class)
+                .hasMessage("Valor do sinistro nao pode exceder a cobertura contratada");
+    }
+
+    private OpenClaimUseCase newUseCaseFor(Policy policy) {
+        return new OpenClaimUseCase(
+                new StubPolicyQueryPort(Optional.of(policy)),
+                claim -> claim,
+                () -> "SIN-TEST001",
+                mapper
+        );
+    }
+
+    private CreateClaimCommand validCommand() {
+        return new CreateClaimCommand(
+                1L,
+                "Colisao traseira em vistoria digital",
+                new BigDecimal("12400.00")
+        );
+    }
+
+    private Policy policyWithStatus(PolicyStatus status) {
+        return new Policy(
+                "AUTO-2026-0001",
+                "Mariana Azevedo",
+                "Seguro Auto Premium",
+                status,
+                new BigDecimal("489.90"),
+                new BigDecimal("98000.00"),
+                LocalDate.now().minusMonths(5),
+                LocalDate.now().plusMonths(7),
+                42
+        );
     }
 
     private static class StubPolicyQueryPort implements PolicyQueryPort {
