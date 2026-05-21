@@ -1,8 +1,10 @@
 package br.com.securepolicy.infrastructure.web;
 
+import br.com.securepolicy.application.dto.ListPoliciesQuery;
 import br.com.securepolicy.application.dto.PolicyResponse;
 import br.com.securepolicy.application.usecase.GetPolicyDetailsUseCase;
 import br.com.securepolicy.application.usecase.ListPoliciesUseCase;
+import br.com.securepolicy.domain.PolicyStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,8 +23,9 @@ public class PolicyController {
     }
 
     @GetMapping
-    public List<PolicyResponse> listPolicies() {
-        return listPoliciesUseCase.execute();
+    public List<PolicyResponse> listPolicies(@RequestParam(required = false) PolicyStatus status,
+                                             @RequestParam(required = false) String search) {
+        return listPoliciesUseCase.execute(new ListPoliciesQuery(status, search));
     }
 
     @GetMapping("/{id}")
