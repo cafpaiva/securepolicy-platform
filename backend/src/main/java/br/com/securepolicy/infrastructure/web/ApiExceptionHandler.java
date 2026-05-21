@@ -1,6 +1,7 @@
-package br.com.securepolicy.controller;
+package br.com.securepolicy.infrastructure.web;
 
-import br.com.securepolicy.dto.ApiErrorResponse;
+import br.com.securepolicy.domain.exception.PolicyNotFoundException;
+import br.com.securepolicy.infrastructure.web.dto.ApiErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,8 +14,8 @@ import java.time.OffsetDateTime;
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiErrorResponse> handleNotFound(IllegalArgumentException exception, HttpServletRequest request) {
+    @ExceptionHandler(PolicyNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleNotFound(PolicyNotFoundException exception, HttpServletRequest request) {
         return buildResponse(HttpStatus.NOT_FOUND, exception.getMessage(), request.getRequestURI());
     }
 

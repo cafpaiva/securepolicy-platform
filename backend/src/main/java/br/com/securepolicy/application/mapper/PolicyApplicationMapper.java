@@ -1,13 +1,13 @@
-package br.com.securepolicy.service;
+package br.com.securepolicy.application.mapper;
 
+import br.com.securepolicy.application.dto.ClaimResponse;
+import br.com.securepolicy.application.dto.PolicyResponse;
 import br.com.securepolicy.domain.InsuranceClaim;
 import br.com.securepolicy.domain.Policy;
-import br.com.securepolicy.dto.ClaimResponse;
-import br.com.securepolicy.dto.PolicyResponse;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PolicyMapper {
+public class PolicyApplicationMapper {
 
     public PolicyResponse toPolicyResponse(Policy policy) {
         return new PolicyResponse(
