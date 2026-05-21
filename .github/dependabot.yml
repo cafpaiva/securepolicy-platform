@@ -5,6 +5,10 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
+    groups:
+      backend-dependencies:
+        patterns:
+          - "*"
     labels:
       - "dependencies"
       - "backend"
@@ -14,6 +18,10 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
+    groups:
+      react-dependencies:
+        patterns:
+          - "*"
     labels:
       - "dependencies"
       - "frontend"
@@ -23,6 +31,10 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
+    groups:
+      angular-mfe-dependencies:
+        patterns:
+          - "*"
     labels:
       - "dependencies"
       - "microfrontend"
@@ -31,6 +43,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
     labels:
       - "dependencies"
       - "ci"
