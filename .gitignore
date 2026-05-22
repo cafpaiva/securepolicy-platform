@@ -6,3 +6,9 @@ dist/
 .vscode/
 *.iml
 *.log
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log

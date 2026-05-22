@@ -1,0 +1,105 @@
+<mxfile host="app.diagrams.net" modified="2026-05-22T00:00:00.000Z" agent="Codex" version="24.7.17">
+  <diagram id="securepolicy-azure-aks" name="Azure AKS Architecture">
+    <mxGraphModel dx="1600" dy="980" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="SecurePolicy - Azure Kubernetes Infrastructure" style="text;html=1;strokeColor=none;fillColor=none;fontSize=26;fontStyle=1;fontColor=#1f2937;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="30" width="760" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="Provisionamento com Terraform, build/deploy com GitHub Actions e workloads em AKS" style="text;html=1;strokeColor=none;fillColor=none;fontSize=14;fontColor=#4b5563;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="70" width="760" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="lane-ci" value="CI/CD e Estado Terraform" style="swimlane;html=1;whiteSpace=wrap;rounded=1;arcSize=6;startSize=34;fillColor=#f8fafc;strokeColor=#94a3b8;fontColor=#0f172a;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="130" width="310" height="730" as="geometry" />
+        </mxCell>
+        <mxCell id="github-actions" value="GitHub Actions&#xa;infra-terraform.yml&#xa;deploy-aks.yml" style="rounded=1;whiteSpace=wrap;html=1;arcSize=8;fillColor=#24292f;strokeColor=#111827;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="lane-ci">
+          <mxGeometry x="45" y="65" width="220" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="entra" value="Microsoft Entra ID&#xa;OIDC / Service Principal" style="rounded=1;whiteSpace=wrap;html=1;arcSize=8;fillColor=#e0f2fe;strokeColor=#0078d4;fontColor=#111827;fontStyle=1;" vertex="1" parent="lane-ci">
+          <mxGeometry x="45" y="205" width="220" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="state-rg" value="Resource Group de State&#xa;rg-securepolicy-tfstate" style="swimlane;html=1;whiteSpace=wrap;rounded=1;arcSize=6;startSize=28;fillColor=#eff6ff;strokeColor=#60a5fa;fontColor=#1e3a8a;fontStyle=1;" vertex="1" parent="lane-ci">
+          <mxGeometry x="35" y="360" width="240" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="tfstate" value="Azure Storage Account&#xa;Container: tfstate&#xa;securepolicy-dev.tfstate" style="rounded=1;whiteSpace=wrap;html=1;arcSize=8;fillColor=#dbeafe;strokeColor=#2563eb;fontColor=#111827;fontStyle=1;" vertex="1" parent="state-rg">
+          <mxGeometry x="25" y="65" width="190" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="subscription" value="Azure Subscription" style="swimlane;html=1;whiteSpace=wrap;rounded=1;arcSize=6;startSize=34;fillColor=#ffffff;strokeColor=#0078d4;fontColor=#0f172a;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="410" y="130" width="1130" height="730" as="geometry" />
+        </mxCell>
+        <mxCell id="app-rg" value="Resource Group da Aplicacao - rg-securepolicy-dev" style="swimlane;html=1;whiteSpace=wrap;rounded=1;arcSize=6;startSize=34;fillColor=#f8fbff;strokeColor=#0078d4;fontColor=#0f172a;fontStyle=1;" vertex="1" parent="subscription">
+          <mxGeometry x="35" y="55" width="1060" height="640" as="geometry" />
+        </mxCell>
+
+        <mxCell id="acr" value="Azure Container Registry&#xa;ACR privado&#xa;Imagens versionadas por SHA" style="rounded=1;whiteSpace=wrap;html=1;arcSize=8;fillColor=#dbeafe;strokeColor=#2563eb;fontColor=#111827;fontStyle=1;" vertex="1" parent="app-rg">
+          <mxGeometry x="40" y="70" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="monitor" value="Azure Monitor&#xa;Log Analytics Workspace&#xa;Container Insights" style="rounded=1;whiteSpace=wrap;html=1;arcSize=8;fillColor=#fef3c7;strokeColor=#d97706;fontColor=#111827;fontStyle=1;" vertex="1" parent="app-rg">
+          <mxGeometry x="780" y="70" width="240" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="vnet" value="Virtual Network - vnet-securepolicy-dev (10.40.0.0/16)" style="swimlane;html=1;whiteSpace=wrap;rounded=1;arcSize=6;startSize=30;fillColor=#ecfeff;strokeColor=#0891b2;fontColor=#0f172a;fontStyle=1;" vertex="1" parent="app-rg">
+          <mxGeometry x="40" y="230" width="980" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="subnet" value="AKS Subnet - snet-aks (10.40.1.0/24)" style="swimlane;html=1;whiteSpace=wrap;rounded=1;arcSize=6;startSize=28;fillColor=#f0fdfa;strokeColor=#0f766e;fontColor=#0f172a;fontStyle=1;" vertex="1" parent="vnet">
+          <mxGeometry x="30" y="65" width="920" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="aks" value="Azure Kubernetes Service&#xa;aks-securepolicy-dev&#xa;Node pool com autoscaling&#xa;Managed Identity" style="rounded=1;whiteSpace=wrap;html=1;arcSize=8;fillColor=#e0f2fe;strokeColor=#0078d4;fontColor=#111827;fontStyle=1;" vertex="1" parent="subnet">
+          <mxGeometry x="35" y="65" width="220" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="react" value="React Frontend&#xa;Deployment: securepolicy-react&#xa;Service: LoadBalancer :80&#xa;Nginx reverse proxy" style="rounded=1;whiteSpace=wrap;html=1;arcSize=8;fillColor=#dbeafe;strokeColor=#2563eb;fontColor=#111827;fontStyle=1;" vertex="1" parent="subnet">
+          <mxGeometry x="340" y="35" width="230" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="api" value="Spring Boot API&#xa;Deployment: securepolicy-api&#xa;Service: ClusterIP :8080&#xa;/actuator/health" style="rounded=1;whiteSpace=wrap;html=1;arcSize=8;fillColor=#dcfce7;strokeColor=#16a34a;fontColor=#111827;fontStyle=1;" vertex="1" parent="subnet">
+          <mxGeometry x="660" y="35" width="220" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="mfe" value="Angular MFE&#xa;Deployment: securepolicy-angular-mfe&#xa;Service: ClusterIP :80&#xa;Acessado via /mfe/" style="rounded=1;whiteSpace=wrap;html=1;arcSize=8;fillColor=#fee2e2;strokeColor=#dc2626;fontColor=#111827;fontStyle=1;" vertex="1" parent="subnet">
+          <mxGeometry x="340" y="180" width="230" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="internet" value="Usuarios&#xa;Internet" style="rounded=1;whiteSpace=wrap;html=1;arcSize=8;fillColor=#ffffff;strokeColor=#64748b;fontColor=#111827;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1330" y="430" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend" value="Legenda&#xa;Azul: Plataforma Azure / Frontend&#xa;Verde: Backend API&#xa;Vermelho: Micro-frontend&#xa;Amarelo: Observabilidade" style="rounded=1;whiteSpace=wrap;html=1;arcSize=8;fillColor=#ffffff;strokeColor=#cbd5e1;fontColor=#334155;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="40" width="320" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e-auth" value="autentica" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeColor=#475569;fontColor=#475569;" edge="1" parent="1" source="github-actions" target="entra">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-state" value="backend remoto" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeColor=#2563eb;fontColor=#2563eb;" edge="1" parent="1" source="github-actions" target="tfstate">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-terraform" value="terraform plan/apply" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeColor=#0078d4;fontColor=#0078d4;" edge="1" parent="1" source="github-actions" target="app-rg">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="385" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-push" value="docker push" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeColor=#2563eb;fontColor=#2563eb;" edge="1" parent="1" source="github-actions" target="acr">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-kubectl" value="kubectl apply" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeColor=#0078d4;fontColor=#0078d4;" edge="1" parent="1" source="github-actions" target="aks">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-acr-pull" value="AcrPull" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeColor=#2563eb;fontColor=#2563eb;" edge="1" parent="app-rg" source="aks" target="acr">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-monitor" value="logs / metricas" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeColor=#d97706;fontColor=#d97706;" edge="1" parent="app-rg" source="aks" target="monitor">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-user" value="HTTP :80" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeColor=#64748b;fontColor=#64748b;" edge="1" parent="1" source="internet" target="react">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-api" value="/api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeColor=#16a34a;fontColor=#16a34a;" edge="1" parent="subnet" source="react" target="api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-mfe" value="/mfe/" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeColor=#dc2626;fontColor=#dc2626;" edge="1" parent="subnet" source="react" target="mfe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

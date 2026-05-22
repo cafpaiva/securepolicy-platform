@@ -32,6 +32,8 @@ docs/                 Roadmap, sprints, GitFlow e padroes de engenharia
 - [GitFlow](docs/GITFLOW.md)
 - [Conventional Commits](docs/CONVENTIONAL_COMMITS.md)
 - [GitHub profissional](docs/GITHUB_PROFESSIONAL_SETUP.md)
+- [Infraestrutura Azure com Terraform](docs/AZURE_TERRAFORM_INFRA.md)
+- [Deploy Kubernetes no AKS](docs/AZURE_AKS_DEPLOY.md)
 
 ## Ferramentas portateis
 

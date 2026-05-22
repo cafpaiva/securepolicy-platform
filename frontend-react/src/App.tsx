@@ -20,6 +20,8 @@ const statusLabel = {
   PAID: 'Pago'
 };
 
+const angularMfeUrl = import.meta.env.VITE_ANGULAR_MFE_URL ?? 'http://localhost:4200';
+
 function App() {
   const { summary, policies, claims, selectedPolicyId, loading, error, load, selectPolicy, openClaim } =
     useInsuranceStore();
@@ -177,11 +179,11 @@ function App() {
         <section className="panel mfe-panel">
           <div className="panel-heading">
             <h2>Micro-frontend Angular</h2>
-            <span>http://localhost:4200</span>
+            <span>{angularMfeUrl}</span>
           </div>
           <iframe
             title="Atendimento Angular"
-            src="http://localhost:4200"
+            src={angularMfeUrl}
             loading="lazy"
             sandbox="allow-scripts allow-same-origin allow-forms"
           />

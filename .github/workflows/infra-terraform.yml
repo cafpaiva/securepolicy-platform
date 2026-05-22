@@ -1,0 +1,131 @@
+name: Terraform Infra
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Acao do Terraform"
+        required: true
+        default: "plan"
+        type: choice
+        options:
+          - plan
+          - apply
+          - destroy
+      environment:
+        description: "Ambiente da infraestrutura"
+        required: true
+        default: "dev"
+        type: choice
+        options:
+          - dev
+          - hml
+          - prd
+
+env:
+  TF_IN_AUTOMATION: true
+  TF_INPUT: false
+  TF_VAR_project_name: securepolicy
+  TF_VAR_environment: ${{ inputs.environment }}
+  TF_VAR_location: ${{ vars.AZURE_LOCATION || 'brazilsouth' }}
+  TF_STATE_RESOURCE_GROUP: ${{ vars.TF_STATE_RESOURCE_GROUP }}
+  TF_STATE_STORAGE_ACCOUNT: ${{ vars.TF_STATE_STORAGE_ACCOUNT }}
+  TF_STATE_CONTAINER: ${{ vars.TF_STATE_CONTAINER || 'tfstate' }}
+  TF_STATE_KEY: securepolicy-${{ inputs.environment }}.tfstate
+
+jobs:
+  terraform:
+    name: Terraform ${{ inputs.action }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
+
+    defaults:
+      run:
+        working-directory: terraform
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.13.4"
+
+      - name: Validate required backend variables
+        run: |
+          test -n "$TF_STATE_RESOURCE_GROUP"
+          test -n "$TF_STATE_STORAGE_ACCOUNT"
+          test -n "$TF_STATE_CONTAINER"
+
+      - name: Bootstrap Terraform state backend
+        run: |
+          az group create \
+            --name "$TF_STATE_RESOURCE_GROUP" \
+            --location "$TF_VAR_location"
+
+          az storage account create \
+            --name "$TF_STATE_STORAGE_ACCOUNT" \
+            --resource-group "$TF_STATE_RESOURCE_GROUP" \
+            --location "$TF_VAR_location" \
+            --sku Standard_LRS \
+            --kind StorageV2 \
+            --min-tls-version TLS1_2 \
+            --allow-blob-public-access false
+
+          ACCOUNT_KEY=$(az storage account keys list \
+            --resource-group "$TF_STATE_RESOURCE_GROUP" \
+            --account-name "$TF_STATE_STORAGE_ACCOUNT" \
+            --query '[0].value' \
+            --output tsv)
+
+          az storage container create \
+            --name "$TF_STATE_CONTAINER" \
+            --account-name "$TF_STATE_STORAGE_ACCOUNT" \
+            --account-key "$ACCOUNT_KEY"
+
+      - name: Terraform fmt
+        run: terraform fmt -check -recursive
+
+      - name: Terraform init
+        run: |
+          terraform init \
+            -backend-config="resource_group_name=$TF_STATE_RESOURCE_GROUP" \
+            -backend-config="storage_account_name=$TF_STATE_STORAGE_ACCOUNT" \
+            -backend-config="container_name=$TF_STATE_CONTAINER" \
+            -backend-config="key=$TF_STATE_KEY"
+
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Terraform plan
+        if: inputs.action == 'plan'
+        run: terraform plan -out=tfplan
+
+      - name: Terraform apply plan
+        if: inputs.action == 'apply'
+        run: |
+          terraform plan -out=tfplan
+          terraform apply -auto-approve tfplan
+
+      - name: Terraform destroy plan
+        if: inputs.action == 'destroy'
+        run: terraform plan -destroy -out=tfdestroy
+
+      - name: Terraform destroy
+        if: inputs.action == 'destroy'
+        run: terraform apply -auto-approve tfdestroy
+
+      - name: Terraform outputs
+        if: inputs.action == 'apply'
+        run: terraform output

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: securepolicy-angular-mfe
+  namespace: securepolicy
+  labels:
+    app: securepolicy-angular-mfe
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: securepolicy-angular-mfe
+  template:
+    metadata:
+      labels:
+        app: securepolicy-angular-mfe
+    spec:
+      containers:
+        - name: web
+          image: __ANGULAR_IMAGE__
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: securepolicy-angular-mfe
+  namespace: securepolicy
+spec:
+  type: ClusterIP
+  selector:
+    app: securepolicy-angular-mfe
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
