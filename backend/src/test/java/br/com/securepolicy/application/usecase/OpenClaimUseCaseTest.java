@@ -6,6 +6,7 @@ import br.com.securepolicy.application.mapper.PolicyApplicationMapper;
 import br.com.securepolicy.application.port.out.ClaimCommandPort;
 import br.com.securepolicy.application.port.out.ClaimProtocolGenerator;
 import br.com.securepolicy.application.port.out.PolicyQueryPort;
+import br.com.securepolicy.domain.ClaimStatus;
 import br.com.securepolicy.domain.InsuranceClaim;
 import br.com.securepolicy.domain.Policy;
 import br.com.securepolicy.domain.PolicyStatus;
@@ -54,6 +55,27 @@ class OpenClaimUseCaseTest {
         assertThat(response.getPolicyNumber()).isEqualTo("AUTO-2026-0001");
         assertThat(response.getCustomerName()).isEqualTo("Mariana Azevedo");
         assertThat(response.getAmount()).isEqualByComparingTo("12400.00");
+        assertThat(response.getStatus()).isEqualTo(ClaimStatus.OPEN);
+        assertThat(policy.getClaims()).hasSize(1);
+        assertThat(policy.getClaims().get(0).getPolicy()).isEqualTo(policy);
+    }
+
+    @Test
+    void shouldPersistOpenedClaim() {
+        CapturingClaimCommandPort claimPort = new CapturingClaimCommandPort();
+        Policy policy = policyWithStatus(PolicyStatus.ACTIVE);
+        OpenClaimUseCase useCase = new OpenClaimUseCase(
+                new StubPolicyQueryPort(Optional.of(policy)),
+                claimPort,
+                () -> "SIN-TEST001",
+                mapper
+        );
+
+        useCase.execute(validCommand());
+
+        assertThat(claimPort.savedClaim).isNotNull();
+        assertThat(claimPort.savedClaim.getProtocol()).isEqualTo("SIN-TEST001");
+        assertThat(claimPort.savedClaim.getPolicy()).isEqualTo(policy);
     }
 
     @Test
@@ -188,6 +210,17 @@ class OpenClaimUseCaseTest {
         @Override
         public BigDecimal sumPremium() {
             return BigDecimal.ZERO;
+        }
+    }
+
+    private static class CapturingClaimCommandPort implements ClaimCommandPort {
+
+        private InsuranceClaim savedClaim;
+
+        @Override
+        public InsuranceClaim save(InsuranceClaim claim) {
+            this.savedClaim = claim;
+            return claim;
         }
     }
 }
